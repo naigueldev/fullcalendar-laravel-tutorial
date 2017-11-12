@@ -258,7 +258,6 @@ $(document).ready(function() {
     shortTIme: false,
     format: 'DD-MM-YYYY HH:mm'
   });
-
 });
 
 $('#delete').on('click', function(){
