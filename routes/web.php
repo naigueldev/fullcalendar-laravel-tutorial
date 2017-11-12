@@ -14,4 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
+// Route::resource('events','EventsController',['only' => ['index','store'] ]);
 Route::resource('events','EventsController');
+Route::post('criarEvento','EventsController@create');
+Route::post('atualizaEvento','EventsController@update');
