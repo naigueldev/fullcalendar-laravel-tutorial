@@ -5,9 +5,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Laravel</title>
+  <title>Naiguel-FullCalendar Tutorial</title>
 
   <!-- Fonts -->
+  {!! Html::style('https://fonts.googleapis.com/icon?family=Material+Icons') !!}
   <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
 
   {!! Html::style('css/app.css') !!}
@@ -41,6 +42,25 @@
 </head>
 <body>
   <div class="container">
+
+    <div class="modal fade" id="modalAlert" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 1051 !important;">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Alerta</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						O evento não pode iniciar em data no passado !
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
+					</div>
+				</div>
+			</div>
+		</div>
 
     <div class="modal fade" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 1051 !important;">
 			<div class="modal-dialog" role="document">
@@ -192,18 +212,39 @@ var BASEURL = "{{ url('/')}}";
 $(document).ready(function() {
   $('#calendar').fullCalendar({
     header: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'month,basicWeek,basicDay'
-    },
-    navLinks: true, //para ativar a navegacao nos links para listar dias/semanas
-    editable: true,
-    selectable: true, // para permitir selecionar cada evento
-    selectHelper: true, // permite adicionar novo evento no calendario
-    select: function(start){
-      start = moment(start.format());
-      $('#date_start').val(start.format('DD-MM-YYYY'));
-      $('#responsive-model').modal('show');
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,basicWeek,basicDay'
+			},
+			navLinks: true, // can click day/week names to navigate views
+			editable: true,
+			selectable: true, // para permitir selecionar cada evento
+			selectConstraint: {
+				start: $.fullCalendar.moment().subtract(1, 'days'),
+				end: $.fullCalendar.moment().startOf('month').add(1, 'month')
+			},
+			selectHelper: true, // permite adicionar novo evento no calendario
+			select: function(start, end){
+				// if(start.isBefore(moment())) {
+				// 	$('#calendar').fullCalendar('unselect');
+				// 	return false;
+				// }
+				// start = moment(start.format());
+
+				var check = start.format("YYYY-MM-DD");
+				var today = moment().format("YYYY-MM-DD");
+				console.log("var check = " + check);
+				console.log("var today = " + today);
+				if(check < today){
+
+			        // alert("O evento não pode ser em data anterior a hoje.")
+			    	$('#modalAlert').modal('show');
+			    }
+			    else
+			    {
+			    	$('#date_start').val(start.format('DD-MM-YYYY'));
+			    	$('#responsive-model').modal('show');
+			    }
     },
     events: BASEURL + '/events',
     eventClick: function(event, jsEvent, view){
